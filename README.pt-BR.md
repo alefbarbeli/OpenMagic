@@ -105,7 +105,8 @@ cd 'C:\Program Files\OpenMagic\tools'
 
 Em **Configurações > Aplicativos > Aplicativos instalados**, selecione **OpenMagic** e **Desinstalar**.
 O teclado e o mouse voltam aos drivers padrão do Windows, o certificado é removido e o desinstalador
-pergunta se deve desligar o modo de teste.
+pergunta se deve desligar o modo de teste. Depois, desligue e ligue o Magic Mouse: ele continua no modo
+multitoque, que o driver padrão não entende, até ser reiniciado.
 
 ## Como funciona e compilação
 

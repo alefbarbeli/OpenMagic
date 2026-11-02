@@ -120,7 +120,8 @@ cd 'C:\Program Files\OpenMagic\tools'
 
 Open **Settings > Apps > Installed apps**, select **OpenMagic** and choose **Uninstall**. The keyboard
 and mouse go back to the standard Windows drivers, the certificate is removed, and Setup asks whether to
-turn test-signing mode off.
+turn test-signing mode off. Afterwards, turn the Magic Mouse off and on again: it stays in multitouch
+mode, which the standard driver can't read, until it restarts.
 
 ## How it works
 

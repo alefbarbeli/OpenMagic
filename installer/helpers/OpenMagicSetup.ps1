@@ -23,9 +23,11 @@ param(
   [string]$Certificate,
   [string]$Thumbprint
 )
-$Inf = @($Inf -split ';' | Where-Object { $_ })
+# A separate variable: assigning an array back to the [string] parameter would join it again.
+$infPaths = @($Inf -split ';' | Where-Object { $_ })
 
 $ErrorActionPreference = 'Stop'
+Set-Location $PSScriptRoot
 $logFile = Join-Path $PSScriptRoot 'setup.log'
 $taskName = 'OpenMagic - finish driver setup'
 $packages = 'openmagickbd.inf', 'openmagicmouse.inf', 'openmagicmousebt.inf'
@@ -95,19 +97,19 @@ try {
       foreach ($service in 'OpenMagicKbd', 'OpenMagicMouse') {
         Remove-ItemProperty "HKLM:\SYSTEM\CurrentControlSet\Services\$service\Parameters" -Name Debug, DebugLog -ErrorAction SilentlyContinue
       }
-      Install-Packages $Inf
+      Install-Packages $infPaths
     }
     'ScheduleInstall' {
       Remove-Packages
-      foreach ($path in $Inf) {
+      foreach ($path in $infPaths) {
         if ((Invoke-Tool "$env:SystemRoot\System32\pnputil.exe" @('/add-driver', $path)) -notin 0, 259) { throw "pnputil failed for $path" }
       }
-      $command = "& '$PSCommandPath' -Action InstallDrivers -Inf '$($Inf -join ';')'; Unregister-ScheduledTask -TaskName '$taskName' -Confirm:`$false"
+      $command = "& '$PSCommandPath' -Action InstallDrivers -Inf '$Inf'; Unregister-ScheduledTask -TaskName '$taskName' -Confirm:`$false"
       $taskAction = New-ScheduledTaskAction -Execute "$env:SystemRoot\System32\WindowsPowerShell\v1.0\powershell.exe" `
         -Argument "-NoProfile -ExecutionPolicy Bypass -Command `"$command`""
       Register-ScheduledTask -TaskName $taskName -Action $taskAction -Trigger (New-ScheduledTaskTrigger -AtStartup) `
         -Principal (New-ScheduledTaskPrincipal -UserId 'SYSTEM' -RunLevel Highest) -Force | Out-Null
-      Log "Scheduled installation at next startup: $($Inf -join ', ')"
+      Log "Scheduled installation at next startup: $($infPaths -join ', ')"
     }
     'Uninstall' {
       Unregister-ScheduledTask -TaskName $taskName -Confirm:$false -ErrorAction SilentlyContinue

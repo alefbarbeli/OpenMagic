@@ -35,6 +35,7 @@ SetupIconFile=..\assets\openmagic.ico
 UninstallDisplayIcon={app}\openmagic.ico
 UninstallDisplayName=OpenMagic
 WizardStyle=modern
+ShowLanguageDialog=auto
 WizardImageFile=wizard-100.bmp,wizard-200.bmp
 WizardSmallImageFile=wizard-small-100.bmp,wizard-small-200.bmp
 ArchitecturesAllowed=x64compatible
@@ -101,6 +102,7 @@ en.StatusTestMode=Turning on test-signing mode...
 en.StatusDrivers=Installing the drivers...
 en.InstallFailed=Some steps did not complete: %1.%n%nDetails are in %2.
 en.UninstallTestMode=Turn off Windows test-signing mode?%n%nChoose No if other test-signed drivers on this PC still need it. A restart is required.
+en.UninstallMouseReset=Turn the Magic Mouse off and on again (switch on the bottom) so it leaves multitouch mode and works with the standard Windows driver.
 
 ptbr.TypeFull=Instalação completa
 ptbr.TypeCustom=Instalação personalizada
@@ -121,6 +123,7 @@ ptbr.StatusTestMode=Ativando o modo de teste de assinatura...
 ptbr.StatusDrivers=Instalando os drivers...
 ptbr.InstallFailed=Algumas etapas não foram concluídas: %1.%n%nOs detalhes estão em %2.
 ptbr.UninstallTestMode=Desativar o modo de teste de assinatura do Windows?%n%nEscolha Não se outros drivers assinados para teste neste PC ainda precisam dele. É necessário reiniciar.
+ptbr.UninstallMouseReset=Desligue e ligue o Magic Mouse (chave embaixo dele) para ele sair do modo multitoque e funcionar com o driver padrão do Windows.
 
 [Code]
 var
@@ -162,9 +165,11 @@ function RunHelper(const Arguments: String): Integer;
 var
   ExitCode: Integer;
 begin
+  // A real working directory: by default it would be the {sysnative} path,
+  // which does not exist for the 64-bit PowerShell it starts.
   if not Exec(ExpandConstant('{sysnative}\WindowsPowerShell\v1.0\powershell.exe'),
     '-NoProfile -NonInteractive -ExecutionPolicy Bypass -File "' + ExpandConstant('{app}\setup\OpenMagicSetup.ps1') + '" ' + Arguments,
-    '', SW_HIDE, ewWaitUntilTerminated, ExitCode) then
+    ExpandConstant('{app}\setup'), SW_HIDE, ewWaitUntilTerminated, ExitCode) then
     ExitCode := -1;
   Log(Format('OpenMagicSetup.ps1 %s -> %d', [Arguments, ExitCode]));
   Result := ExitCode;
@@ -284,6 +289,8 @@ begin
   if CurUninstallStep <> usUninstall then
     Exit;
   RunHelper('-Action Uninstall -Thumbprint {#CertThumbprint}');
+  if FileExists(ExpandConstant('{app}\drivers\mouse\OpenMagicMouse.inf')) then
+    SuppressibleMsgBox(CustomMessage('UninstallMouseReset'), mbInformation, MB_OK, IDOK);
   if IsTestSigningActive and
      (SuppressibleMsgBox(CustomMessage('UninstallTestMode'), mbConfirmation, MB_YESNO, IDNO) = IDYES) and
      (RunHelper('-Action DisableTestMode') = 3010) then

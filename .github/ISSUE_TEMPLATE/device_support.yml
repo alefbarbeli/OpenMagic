@@ -1,0 +1,38 @@
+name: Device support
+description: Ask for support of another Magic Keyboard, Magic Mouse or Magic Trackpad model
+labels: [device-support]
+body:
+  - type: input
+    id: device
+    attributes:
+      label: Device and model number
+      description: The model number is printed on the bottom of the device.
+      placeholder: Magic Trackpad 2, A1535
+    validations:
+      required: true
+  - type: dropdown
+    id: connection
+    attributes:
+      label: Connection
+      multiple: true
+      options:
+        - Bluetooth
+        - USB
+    validations:
+      required: true
+  - type: textarea
+    id: ids
+    attributes:
+      label: Hardware IDs
+      description: >
+        Output of
+        `Get-PnpDevice -PresentOnly | Where-Object InstanceId -match '004C|05AC' | Format-Table -AutoSize Status, Class, FriendlyName, InstanceId`
+        with the device connected.
+      render: text
+    validations:
+      required: true
+  - type: textarea
+    id: notes
+    attributes:
+      label: Anything else
+      description: What works today with the standard Windows driver, and what you would like OpenMagic to add.

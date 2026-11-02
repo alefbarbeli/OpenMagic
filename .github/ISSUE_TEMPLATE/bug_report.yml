@@ -1,0 +1,52 @@
+name: Bug report
+description: Something doesn't work as expected
+labels: [bug]
+body:
+  - type: dropdown
+    id: driver
+    attributes:
+      label: Driver
+      options:
+        - Keyboard (OpenMagicKbd)
+        - Mouse (OpenMagicMouse)
+        - Installer
+    validations:
+      required: true
+  - type: input
+    id: device
+    attributes:
+      label: Device and model number
+      description: The model number is printed on the bottom of the device (for example A1843 or A1657).
+      placeholder: Magic Mouse 2, A1657
+    validations:
+      required: true
+  - type: dropdown
+    id: connection
+    attributes:
+      label: Connection
+      options:
+        - Bluetooth
+        - USB
+    validations:
+      required: true
+  - type: input
+    id: versions
+    attributes:
+      label: OpenMagic and Windows versions
+      description: OpenMagic version from Settings > Apps, Windows build from `winver`.
+      placeholder: OpenMagic 1.0.0, Windows 11 24H2 (26100.1234)
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: What happened
+      description: What you did, what you expected and what happened instead.
+    validations:
+      required: true
+  - type: textarea
+    id: trace
+    attributes:
+      label: Diagnostic trace
+      description: Optional, but very helpful. See [Contributing](https://github.com/alefbarbeli/OpenMagic/blob/main/CONTRIBUTING.md#reporting-a-problem).
+      render: text
