@@ -9,3 +9,4 @@ Release/
 *.exe
 scripts/*.log
 tools/*.log
+out/

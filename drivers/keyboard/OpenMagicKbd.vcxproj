@@ -26,7 +26,8 @@
     <DriverTargetPlatform>Universal</DriverTargetPlatform>
     <KMDF_VERSION_MAJOR>1</KMDF_VERSION_MAJOR>
     <KMDF_VERSION_MINOR>15</KMDF_VERSION_MINOR>
-    <SignMode>TestSign</SignMode>
+    <!-- scripts\build.ps1 signs the package with the project certificate. -->
+    <SignMode>Off</SignMode>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <PropertyGroup>
@@ -40,9 +41,6 @@
     <Link>
       <AdditionalDependencies>$(DDK_LIB_PATH)hidparse.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
-    <DriverSign>
-      <FileDigestAlgorithm>sha256</FileDigestAlgorithm>
-    </DriverSign>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="OpenMagicKbd.h" />
@@ -51,6 +49,11 @@
     <ClCompile Include="upper.c" />
     <ClCompile Include="config.c" />
     <ClCompile Include="debug.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="..\common\version.rc">
+      <PreprocessorDefinitions>OM_FILE_DESCRIPTION=\"OpenMagic Magic Keyboard Filter Driver\";OM_FILE_NAME=\"OpenMagicKbd.sys\";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
     <Inf Include="OpenMagicKbd.inf" />

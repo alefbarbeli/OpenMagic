@@ -1,0 +1,19 @@
+<Project>
+  <!-- Single source of the OpenMagic version: driver INF DriverVer, driver file
+       version resources and the installer (scripts\build.ps1 reads it too). -->
+  <PropertyGroup>
+    <OpenMagicVersion>1.0.0</OpenMagicVersion>
+    <OpenMagicVersionMajor>$(OpenMagicVersion.Split('.')[0])</OpenMagicVersionMajor>
+    <OpenMagicVersionMinor>$(OpenMagicVersion.Split('.')[1])</OpenMagicVersionMinor>
+    <OpenMagicVersionPatch>$(OpenMagicVersion.Split('.')[2])</OpenMagicVersionPatch>
+  </PropertyGroup>
+
+  <ItemDefinitionGroup>
+    <ResourceCompile>
+      <PreprocessorDefinitions>OM_VER_MAJOR=$(OpenMagicVersionMajor);OM_VER_MINOR=$(OpenMagicVersionMinor);OM_VER_PATCH=$(OpenMagicVersionPatch);OM_VER_STRING=\"$(OpenMagicVersion)\";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ResourceCompile>
+    <Inf>
+      <TimeStamp>$(OpenMagicVersion).0</TimeStamp>
+    </Inf>
+  </ItemDefinitionGroup>
+</Project>

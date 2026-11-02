@@ -26,7 +26,8 @@
     <DriverTargetPlatform>Universal</DriverTargetPlatform>
     <KMDF_VERSION_MAJOR>1</KMDF_VERSION_MAJOR>
     <KMDF_VERSION_MINOR>15</KMDF_VERSION_MINOR>
-    <SignMode>TestSign</SignMode>
+    <!-- scripts\build.ps1 signs the package with the project certificate. -->
+    <SignMode>Off</SignMode>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <PropertyGroup>
@@ -37,9 +38,6 @@
       <WarningLevel>Level4</WarningLevel>
       <WppEnabled>false</WppEnabled>
     </ClCompile>
-    <DriverSign>
-      <FileDigestAlgorithm>sha256</FileDigestAlgorithm>
-    </DriverSign>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="OpenMagicMouse.h" />
@@ -48,6 +46,11 @@
     <ClCompile Include="scroll.c" />
     <ClCompile Include="mouse.c" />
     <ClCompile Include="debug.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="..\common\version.rc">
+      <PreprocessorDefinitions>OM_FILE_DESCRIPTION=\"OpenMagic Magic Mouse Filter Driver\";OM_FILE_NAME=\"OpenMagicMouse.sys\";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
     <Inf Include="OpenMagicMouseBt.inf" />

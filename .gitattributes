@@ -11,5 +11,6 @@
 
 # Binary assets
 *.ico binary
+*.bmp binary
 *.png binary
 *.cer binary

@@ -1,0 +1,35 @@
+// Version resource shared by the OpenMagic drivers. Each project defines
+// OM_FILE_DESCRIPTION and OM_FILE_NAME; the version comes from Directory.Build.props.
+
+#define VOS_NT_WINDOWS32    0x00040004L
+#define VFT_DRV             0x00000003L
+#define VFT2_DRV_SYSTEM     0x00000007L
+
+1 VERSIONINFO
+ FILEVERSION     OM_VER_MAJOR, OM_VER_MINOR, OM_VER_PATCH, 0
+ PRODUCTVERSION  OM_VER_MAJOR, OM_VER_MINOR, OM_VER_PATCH, 0
+ FILEFLAGSMASK   0x3FL
+ FILEFLAGS       0x0L
+ FILEOS          VOS_NT_WINDOWS32
+ FILETYPE        VFT_DRV
+ FILESUBTYPE     VFT2_DRV_SYSTEM
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904B0"
+        BEGIN
+            VALUE "CompanyName",      "OpenMagic Project"
+            VALUE "FileDescription",  OM_FILE_DESCRIPTION
+            VALUE "FileVersion",      OM_VER_STRING
+            VALUE "InternalName",     OM_FILE_NAME
+            VALUE "LegalCopyright",   "Copyright (c) 2026 Alef Barbeli. MIT License."
+            VALUE "OriginalFilename", OM_FILE_NAME
+            VALUE "ProductName",      "OpenMagic"
+            VALUE "ProductVersion",   OM_VER_STRING
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1200
+    END
+END
