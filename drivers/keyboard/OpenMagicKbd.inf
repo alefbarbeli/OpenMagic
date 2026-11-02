@@ -1,0 +1,84 @@
+;
+; OpenMagicKbd.inf - Fn layer and key remapping for Apple Magic Keyboard.
+;
+; Installs OpenMagicKbd.sys as both a lower and an upper filter of the
+; keyboard's HID collection, on top of the inbox kbdhid keyboard driver.
+;
+
+[Version]
+Signature   = "$WINDOWS NT$"
+Class       = Keyboard
+ClassGuid   = {4D36E96B-E325-11CE-BFC1-08002BE10318}
+Provider    = %ProviderName%
+CatalogFile = OpenMagicKbd.cat
+DriverVer   =
+PnpLockdown = 1
+
+[DestinationDirs]
+DefaultDestDir = 13
+
+[SourceDisksNames]
+1 = %DiskName%,,,""
+
+[SourceDisksFiles]
+OpenMagicKbd.sys = 1,,
+
+[Manufacturer]
+%MfgName% = OpenMagic, NT$ARCH$.10.0...17763
+
+[OpenMagic.NT$ARCH$.10.0...17763]
+%MagicKeyboardNumpad.Bt%  = OpenMagicKbd_Inst, HID\{00001124-0000-1000-8000-00805f9b34fb}_VID&0001004c_PID&026c&Col01
+%MagicKeyboardNumpad.Usb% = OpenMagicKbd_Inst, HID\VID_05AC&PID_026C&MI_01&Col01
+
+[OpenMagicKbd_Inst.NT]
+Include   = keyboard.inf
+Needs     = HID_Keyboard_Inst.NT
+CopyFiles = OpenMagicKbd_CopyFiles
+
+[OpenMagicKbd_CopyFiles]
+OpenMagicKbd.sys
+
+[OpenMagicKbd_Inst.NT.HW]
+Include = keyboard.inf
+Needs   = HID_Keyboard_Inst.NT.HW
+AddReg  = OpenMagicKbd_Filters_AddReg
+
+[OpenMagicKbd_Filters_AddReg]
+HKR,,"LowerFilters",0x00010000,"OpenMagicKbd"
+HKR,,"UpperFilters",0x00010000,"OpenMagicKbd"
+
+[OpenMagicKbd_Inst.NT.Services]
+Include    = keyboard.inf
+Needs      = HID_Keyboard_Inst.NT.Services
+AddService = OpenMagicKbd,, OpenMagicKbd_Service
+
+[OpenMagicKbd_Service]
+DisplayName   = %ServiceDesc%
+ServiceType   = 1               ; SERVICE_KERNEL_DRIVER
+StartType     = 3               ; SERVICE_DEMAND_START
+ErrorControl  = 1               ; SERVICE_ERROR_NORMAL
+ServiceBinary = %13%\OpenMagicKbd.sys
+AddReg        = OpenMagicKbd_Parameters_AddReg
+
+; Default keymaps (format documented in config.c). 0x00010002 =
+; FLG_ADDREG_TYPE_MULTI_SZ | FLG_ADDREG_NOCLOBBER, so reinstalling keeps user edits.
+;   FnMap: F7/F8/F9 prev/play-pause/next, F10/F11/F12 mute/vol-/vol+,
+;          F3 Win+Tab, F4 Win+S, Backspace Delete, arrows PgUp/PgDn/Home/End
+;   Map:   F13 PrintScreen, F14 ScrollLock, F15 Pause
+[OpenMagicKbd_Parameters_AddReg]
+HKR,Parameters,FnMap,0x00010002,"41=E010","42=E022","43=E019","44=E020","57=E02E","58=E030","3D=E05B+0F","3E=E05B+1F","0E=E053","E048=E049","E050=E051","E04B=E047","E04D=E04F"
+HKR,Parameters,Map,0x00010002,"64=E037","65=46","66=E11D"
+
+[OpenMagicKbd_Inst.NT.Wdf]
+KmdfService = OpenMagicKbd, OpenMagicKbd_WdfSect
+
+[OpenMagicKbd_WdfSect]
+KmdfLibraryVersion = $KMDFVERSION$
+
+[Strings]
+ProviderName            = "OpenMagic"
+MfgName                 = "OpenMagic"
+DiskName                = "OpenMagic Keyboard Installation Disk"
+ServiceDesc             = "OpenMagic Keyboard Filter"
+MagicKeyboardNumpad.Bt  = "Magic Keyboard with Numeric Keypad (OpenMagic, Bluetooth)"
+MagicKeyboardNumpad.Usb = "Magic Keyboard with Numeric Keypad (OpenMagic, USB)"

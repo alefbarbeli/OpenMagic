@@ -1,0 +1,80 @@
+;
+; OpenMagicMouseBt.inf - Bluetooth side of the OpenMagic Magic Mouse 2 driver.
+;
+; Installs OpenMagicMouse.sys as a lower filter of the Bluetooth HID device,
+; below the inbox HidBth driver. OpenMagicMouse.inf installs the same service
+; on the mouse collection; both packages must ship the same binary.
+;
+
+[Version]
+Signature   = "$WINDOWS NT$"
+Class       = HIDClass
+ClassGuid   = {745A17A0-74D3-11D0-B6FE-00A0C90F57DA}
+Provider    = %ProviderName%
+CatalogFile = OpenMagicMouseBt.cat
+DriverVer   =
+PnpLockdown = 1
+
+[DestinationDirs]
+DefaultDestDir = 13
+
+[SourceDisksNames]
+1 = %DiskName%,,,""
+
+[SourceDisksFiles]
+OpenMagicMouse.sys = 1,,
+
+[Manufacturer]
+%MfgName% = OpenMagic, NT$ARCH$.10.0...17763
+
+[OpenMagic.NT$ARCH$.10.0...17763]
+%MagicMouse2.Bt% = OpenMagicMouseBt_Inst, BTHENUM\{00001124-0000-1000-8000-00805f9b34fb}_VID&0001004c_PID&0269
+
+[OpenMagicMouseBt_Inst.NT]
+Include   = hidbth.inf
+Needs     = HIDBTH_Inst.NT
+CopyFiles = OpenMagicMouse_CopyFiles
+
+[OpenMagicMouse_CopyFiles]
+OpenMagicMouse.sys
+
+[OpenMagicMouseBt_Inst.NT.HW]
+Include = hidbth.inf
+Needs   = HIDBTH_Inst.NT.HW
+AddReg  = OpenMagicMouseBt_Filters_AddReg
+
+[OpenMagicMouseBt_Filters_AddReg]
+HKR,,"LowerFilters",0x00010000,"OpenMagicMouse"
+
+[OpenMagicMouseBt_Inst.NT.Services]
+Include    = hidbth.inf
+Needs      = HIDBTH_Inst.NT.Services
+AddService = OpenMagicMouse,, OpenMagicMouse_Service
+
+[OpenMagicMouse_Service]
+DisplayName   = %ServiceDesc%
+ServiceType   = 1               ; SERVICE_KERNEL_DRIVER
+StartType     = 3               ; SERVICE_DEMAND_START
+ErrorControl  = 1               ; SERVICE_ERROR_NORMAL
+ServiceBinary = %13%\OpenMagicMouse.sys
+AddReg        = OpenMagicMouse_Parameters_AddReg
+
+; 0x00010003 = FLG_ADDREG_TYPE_DWORD | FLG_ADDREG_NOCLOBBER (keeps user edits).
+[OpenMagicMouse_Parameters_AddReg]
+HKR,Parameters,ScrollSpeed,0x00010003,100
+HKR,Parameters,NaturalScrolling,0x00010003,1
+HKR,Parameters,HorizontalScrolling,0x00010003,1
+HKR,Parameters,SmoothScrolling,0x00010003,1
+
+[OpenMagicMouseBt_Inst.NT.Wdf]
+KmdfService = OpenMagicMouse, OpenMagicMouse_WdfSect
+
+[OpenMagicMouse_WdfSect]
+KmdfLibraryVersion = $KMDFVERSION$
+
+[Strings]
+ProviderName   = "OpenMagic"
+MfgName        = "OpenMagic"
+DiskName       = "OpenMagic Mouse Installation Disk"
+ServiceDesc    = "OpenMagic Mouse Filter"
+MagicMouse2.Bt = "Magic Mouse 2 (OpenMagic, Bluetooth)"

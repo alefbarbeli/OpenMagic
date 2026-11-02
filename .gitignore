@@ -1,0 +1,11 @@
+# Build output
+x64/
+Debug/
+Release/
+*.user
+.vs/
+
+# Local artifacts
+*.exe
+scripts/*.log
+tools/*.log
